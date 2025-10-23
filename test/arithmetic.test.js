@@ -91,19 +91,93 @@ describe('Arithmetic', function () {
                     done();
                 });
         });
-    });
+        });
 
-// TODO: Challenge #1
- 
-
-    describe('Multiplication', function () {
-        it('multiplies two positive integers', function (done) {
-            request.get('/arithmetic?operation=multiply&operand1=21&operand2=2')
+        describe('Power', function () {
+            it('raises a positive integer to a positive integer', function (done) {
+            request.get('/arithmetic?operation=power&operand1=2&operand2=5')
                 .expect(200)
                 .end(function (err, res) {
-                    expect(res.body).to.eql({ result: 42 });
-                    done();
+                expect(res.body).to.eql({ result: 32 });
+                done();
                 });
+            });
+            it('raises to the zero power', function (done) {
+            request.get('/arithmetic?operation=power&operand1=42&operand2=0')
+                .expect(200)
+                .end(function (err, res) {
+                expect(res.body).to.eql({ result: 1 });
+                done();
+                });
+            });
+            it('raises to the power of one', function (done) {
+            request.get('/arithmetic?operation=power&operand1=7&operand2=1')
+                .expect(200)
+                .end(function (err, res) {
+                expect(res.body).to.eql({ result: 7 });
+                done();
+                });
+            });
+            it('handles negative exponents', function (done) {
+            request.get('/arithmetic?operation=power&operand1=2&operand2=-3')
+                .expect(200)
+                .end(function (err, res) {
+                expect(res.body).to.eql({ result: 0.125 });
+                done();
+                });
+            });
+            it('handles fractional exponents', function (done) {
+            request.get('/arithmetic?operation=power&operand1=9&operand2=0.5')
+                .expect(200)
+                .end(function (err, res) {
+                expect(res.body).to.eql({ result: 3 });
+                done();
+                });
+            });
+            it('handles floating precision (0.1 ^ 2)', function (done) {
+            request.get('/arithmetic?operation=power&operand1=0.1&operand2=2')
+                .expect(200)
+                .end(function (err, res) {
+                expect(res.body).to.eql({ result: 0.010000000000000002 });
+                done();
+                });
+            });
+            it('supports exponential notation', function (done) {
+            request.get('/arithmetic?operation=power&operand1=2e1&operand2=2')
+                .expect(200)
+                .end(function (err, res) {
+                expect(res.body).to.eql({ result: 400 });
+                done();
+                });
+            });
+            it('handles large exponents resulting in non-finite result', function (done) {
+            request.get('/arithmetic?operation=power&operand1=2&operand2=1024')
+                .expect(200)
+                .end(function (err, res) {
+                // non-finite values are typically serialized as null in JSON responses
+                expect(res.body).to.eql({ result: null });
+                done();
+                });
+            });
+            it('handles negative base with integer exponent', function (done) {
+            request.get('/arithmetic?operation=power&operand1=-2&operand2=3')
+                .expect(200)
+                .end(function (err, res) {
+                expect(res.body).to.eql({ result: -8 });
+                done();
+                });
+            });
+        });
+       
+
+        describe('Multiplication', function () {
+        it('multiplies two positive integers', function (done) {
+            request.get('/arithmetic?operation=multiply&operand1=21&operand2=2')
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body).to.eql({ result: 42 });
+                done();
+            });
         });
         it('multiplies a positive integer with zero', function (done) {
             request.get('/arithmetic?operation=multiply&operand1=21&operand2=0')
